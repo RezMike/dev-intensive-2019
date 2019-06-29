@@ -41,4 +41,58 @@ data class User(
             return User("$lastId", firstName, lastName)
         }
     }
+
+    class Builder() {
+        private var id: String? = null
+        private var firstName: String? = null
+        private var lastName: String? = null
+        private var avatar: String? = null
+        private var rating: Int = 0
+        private var respect: Int = 0
+        private var lastVisit: Date? = null
+        private var isOnline: Boolean = false
+
+        fun id(value: String) {
+            id = value
+        }
+
+        fun firstName(value: String) {
+            firstName = value
+        }
+
+        fun lastName(value: String) {
+            lastName = value
+        }
+
+        fun avatar(value: String) {
+            avatar = value
+        }
+
+        fun rating(value: Int) {
+            rating = value
+        }
+
+        fun respect(value: Int) {
+            respect = value
+        }
+
+        fun lastVisit(value: Date) {
+            lastVisit = value
+        }
+
+        fun isOnline(value: Boolean) {
+            isOnline = value
+        }
+
+        fun build() = User(
+            id ?: (++lastId).toString(),
+            firstName,
+            lastName,
+            avatar,
+            rating,
+            respect,
+            lastVisit,
+            isOnline
+        )
+    }
 }
