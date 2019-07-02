@@ -52,36 +52,44 @@ data class User(
         private var lastVisit: Date? = null
         private var isOnline: Boolean = false
 
-        fun id(value: String) {
+        fun id(value: String): Builder {
             id = value
+            return this
         }
 
-        fun firstName(value: String) {
+        fun firstName(value: String): Builder {
             firstName = value
+            return this
         }
 
-        fun lastName(value: String) {
+        fun lastName(value: String): Builder {
             lastName = value
+            return this
         }
 
-        fun avatar(value: String) {
+        fun avatar(value: String): Builder {
             avatar = value
+            return this
         }
 
-        fun rating(value: Int) {
+        fun rating(value: Int): Builder {
             rating = value
+            return this
         }
 
-        fun respect(value: Int) {
+        fun respect(value: Int): Builder {
             respect = value
+            return this
         }
 
-        fun lastVisit(value: Date) {
+        fun lastVisit(value: Date): Builder {
             lastVisit = value
+            return this
         }
 
-        fun isOnline(value: Boolean) {
+        fun isOnline(value: Boolean): Builder {
             isOnline = value
+            return this
         }
 
         fun build() = User(
