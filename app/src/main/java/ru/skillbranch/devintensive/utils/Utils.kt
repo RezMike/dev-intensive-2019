@@ -1,7 +1,5 @@
 package ru.skillbranch.devintensive.utils
 
-import java.lang.IllegalStateException
-
 object Utils {
 
     private val translitMap = mapOf(
@@ -12,7 +10,7 @@ object Utils {
     )
 
     fun parseFullName(fullName: String?): Pair<String?, String?> {
-        val parts: List<String>? = fullName?.trim()?.replaceAll("  ", " ")?.split(" ")
+        val parts: List<String>? = fullName?.trim()?.replace(Regex("\\s+"), " ")?.split(" ")
 
         val firstName = parts?.notEmptyOrNullAt(0)
         val lastName = parts?.notEmptyOrNullAt(1)
@@ -20,29 +18,21 @@ object Utils {
         return firstName to lastName
     }
 
-    private fun String.replaceAll(oldValue: String, newValue: String): String {
-        var result = this
-        while (result.contains(oldValue)) {
-            result = result.replace(oldValue, newValue)
-        }
-        return result
-    }
-
     private fun List<String>.notEmptyOrNullAt(index: Int) = getOrNull(index).let {
         if ("" == it) null
         else it
     }
 
-    fun transliteration(payload: String, divider: String = " ") = buildString {
+    fun transliteration(payload: String, divider: String = " "): String {
+        var result = ""
         payload.forEach {
-            append(
-                when {
-                    it == ' ' -> divider
-                    it.isUpperCase() -> translitMap[it.toLowerCase()]?.capitalize() ?: it.toString()
-                    else -> translitMap[it] ?: it.toString()
-                }
-            )
+            result += when {
+                it == ' ' -> divider
+                it.isUpperCase() -> translitMap[it.toLowerCase()]?.capitalize() ?: it.toString()
+                else -> translitMap[it] ?: it.toString()
+            }
         }
+        return result
     }
 
     fun toInitials(firstName: String?, lastName: String?): String? = when {
