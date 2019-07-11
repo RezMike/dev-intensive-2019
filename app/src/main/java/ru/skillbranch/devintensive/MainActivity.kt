@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendAnswer() {
         hideKeyboard()
-        val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
+        val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString())
         messageEt.setText("")
         setBenderColor(color)
         textTv.text = phrase
