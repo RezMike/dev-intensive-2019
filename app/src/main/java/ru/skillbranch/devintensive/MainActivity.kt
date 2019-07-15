@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
         messageEt = et_message
         sendBtn = iv_send
 
-        val status = savedInstanceState?.getString("STATUS") ?: Bender.Status.NORMAL.name
-        val question = savedInstanceState?.getString("QUESTION") ?: Bender.Question.NAME.name
+        val status = savedInstanceState?.getString(SAVED_STATUS) ?: Bender.Status.NORMAL.name
+        val question = savedInstanceState?.getString(SAVED_QUESTION) ?: Bender.Question.NAME.name
         benderObj = Bender(Bender.Status.valueOf(status), Bender.Question.valueOf(question))
 
         textTv.text = benderObj.askQuestion()
@@ -53,7 +53,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendAnswer() {
         hideKeyboard()
-        val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString())
+        val answer = messageEt.text.toString()
+        if (answer.isEmpty()) return
+        val (phrase, color) = benderObj.listenAnswer(answer)
         messageEt.setText("")
         setBenderColor(color)
         textTv.text = phrase
@@ -68,8 +70,13 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
 
         outState?.run {
-            putString("STATUS", benderObj.status.name)
-            putString("QUESTION", benderObj.question.name)
+            putString(SAVED_STATUS, benderObj.status.name)
+            putString(SAVED_QUESTION, benderObj.question.name)
         }
+    }
+
+    companion object {
+        private const val SAVED_STATUS = "STATUS"
+        private const val SAVED_QUESTION = "QUESTION"
     }
 }

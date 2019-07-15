@@ -54,7 +54,7 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = NAME) 
                     "Профессия должна начинаться со строчной буквы\n"
                 else null
         },
-        MATERIAL("Из чего я сделан", listOf("металл", "дерево", "metal", "iron", "wood")) {
+        MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood")) {
             override fun nextQuestion() = BDAY
             override fun validate(answer: String): String? =
                 if (answer.contains(Regex("\\d")))
