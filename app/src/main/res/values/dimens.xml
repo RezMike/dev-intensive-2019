@@ -3,6 +3,7 @@
 
     <!-- font sizes -->
     <dimen name="font_large_24">24sp</dimen>
+    <dimen name="font_big_20">20sp</dimen>
     <dimen name="font_normal_16">16sp</dimen>
     <dimen name="font_small_12">12sp</dimen>
 
@@ -10,10 +11,13 @@
     <dimen name="spacing_huge_32">32dp</dimen>
     <dimen name="spacing_large_24">24dp</dimen>
     <dimen name="spacing_normal_16">16dp</dimen>
-    <dimen name="spacing_small_6">8dp</dimen>
+    <dimen name="spacing_small_8">8dp</dimen>
     <dimen name="spacing_tiny_4">4dp</dimen>
 
-    <!-- UI views sizes -->
-    <dimen name="button_size_24">24dp</dimen>
+    <!-- element sizes -->
+    <dimen name="btn_size_24">24dp</dimen>
+    <dimen name="btn_round_size_40">40dp</dimen>
+    <dimen name="avatar_round_size">112dp</dimen>
+    <dimen name="space_maximum_72">72dp</dimen>
 
 </resources>
