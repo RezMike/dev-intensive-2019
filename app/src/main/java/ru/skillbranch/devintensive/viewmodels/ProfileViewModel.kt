@@ -29,7 +29,9 @@ class ProfileViewModel : ViewModel() {
     }
 
     private fun isRepoError(repository: String): Boolean {
+        if (repository.isEmpty()) return false
         var repo = repository
+
         if (repository.startsWith("https://")) {
             repo = repo.replace("https://", "")
         }

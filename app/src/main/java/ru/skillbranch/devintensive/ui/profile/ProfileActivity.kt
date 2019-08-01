@@ -131,9 +131,9 @@ class ProfileActivity : AppCompatActivity() {
     private fun saveProfileInfo() = viewModel.saveProfileData(
         Profile(
             firstName = et_first_name.text.toString(),
-            lastName = et_first_name.text.toString(),
+            lastName = et_last_name.text.toString(),
             about = et_about.text.toString(),
-            repository = et_about.text.toString()
+            repository = et_repository.text.toString()
         )
     )
 
