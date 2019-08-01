@@ -7,14 +7,14 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.annotation.ColorRes
+import androidx.annotation.Dimension
+import androidx.annotation.Dimension.DP
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import ru.skillbranch.devintensive.R
 import kotlin.math.min
@@ -44,7 +44,7 @@ class CircleImageView @JvmOverloads constructor(
     private val circleBackgroundPaint = Paint()
 
     private var borderColor = DEFAULT_BORDER_COLOR
-    private var borderWidth = DEFAULT_BORDER_WIDTH
+    private var borderWidthDp = DEFAULT_BORDER_WIDTH
     private val circleBackgroundColor = DEFAULT_CIRCLE_BACKGROUND_COLOR
 
     private var bitmap: Bitmap? = null
@@ -64,37 +64,47 @@ class CircleImageView @JvmOverloads constructor(
 
     fun getBorderColor() = borderColor
 
+    fun setBorderColor(hex: String) {
+        val color = Color.parseColor(hex)
+        setColor(color)
+    }
+
     fun setBorderColor(@ColorRes colorId: Int) {
         val color = resources.getColor(colorId, context.theme)
+        setColor(color)
+    }
+
+    private fun setColor(color: Int) {
         if (color == borderColor) return
         borderColor = color
         borderPaint.color = borderColor
         invalidate()
     }
 
-    fun getBorderWidth() = borderWidth
+    @Dimension(unit = DP)
+    fun getBorderWidth() = borderWidthDp
 
-    fun setBorderWidth(dp: Int) {
-        if (dp == borderWidth) return
-        borderWidth = dp
+    fun setBorderWidth(@Dimension(unit = DP) dp: Int) {
+        if (dp == borderWidthDp) return
+        borderWidthDp = dp
         setup()
     }
 
     init {
         val a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0)
 
-        borderWidth = a.getDimensionPixelSize(R.styleable.CircleImageView_cv_borderWidth, DEFAULT_BORDER_WIDTH)
+        borderWidthDp = a.getDimensionPixelSize(R.styleable.CircleImageView_cv_borderWidth, DEFAULT_BORDER_WIDTH)
         borderColor = a.getColor(R.styleable.CircleImageView_cv_borderColor, DEFAULT_BORDER_COLOR)
 
         a.recycle()
 
-        super.setScaleType(SCALE_TYPE);
-        isReady = true;
+        super.setScaleType(SCALE_TYPE)
+        isReady = true
 
-        outlineProvider = OutlineProvider();
+        outlineProvider = OutlineProvider()
 
         if (isSetupPending) {
-            setup();
+            setup()
             isSetupPending = false;
         }
     }
@@ -114,18 +124,10 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        if (isDisableCircularTransformation) {
-            super.onDraw(canvas)
-            return
-        }
-
         if (bitmap == null) return
 
-        if (circleBackgroundColor != Color.TRANSPARENT) {
-            canvas.drawCircle(drawableRect.centerX(), drawableRect.centerY(), drawableRadius, circleBackgroundPaint)
-        }
         canvas.drawCircle(drawableRect.centerX(), drawableRect.centerY(), drawableRadius, bitmapPaint)
-        if (borderWidth > 0) {
+        if (borderWidthDp > 0) {
             canvas.drawCircle(borderRect.centerX(), borderRect.centerY(), borderRadius, borderPaint)
         }
     }
@@ -166,18 +168,14 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     override fun setColorFilter(cf: ColorFilter) {
-        if (cf === colorFilter) {
-            return
-        }
+        if (cf === colorFilter) return
 
         colorFilter = cf
         applyColorFilter()
         invalidate()
     }
 
-    override fun getColorFilter(): ColorFilter? {
-        return colorFilter
-    }
+    override fun getColorFilter() = colorFilter
 
     private fun applyColorFilter() {
         bitmapPaint.colorFilter = colorFilter
@@ -208,11 +206,7 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     private fun initializeBitmap() {
-        if (isDisableCircularTransformation) {
-            bitmap = null
-        } else {
-            bitmap = getBitmapFromDrawable(drawable)
-        }
+        bitmap = getBitmapFromDrawable(drawable)
         setup()
     }
 
@@ -234,11 +228,11 @@ class CircleImageView @JvmOverloads constructor(
         bitmapPaint.isAntiAlias = true
         bitmapPaint.shader = bitmapShader
 
-        val borderWidthPx = borderWidth * context.applicationContext.resources.displayMetrics.density
+        val borderWidth = borderWidthDp * context.applicationContext.resources.displayMetrics.density
         borderPaint.style = Paint.Style.STROKE
         borderPaint.isAntiAlias = true
         borderPaint.color = borderColor
-        borderPaint.strokeWidth = borderWidthPx.toFloat()
+        borderPaint.strokeWidth = borderWidth
 
         circleBackgroundPaint.style = Paint.Style.FILL
         circleBackgroundPaint.isAntiAlias = true
@@ -248,13 +242,13 @@ class CircleImageView @JvmOverloads constructor(
         bitmapWidth = bitmap!!.width
 
         borderRect.set(calculateBounds())
-        borderRadius = min((borderRect.height() - borderWidthPx) / 2.0f, (borderRect.width() - borderWidthPx) / 2.0f)
+        borderRadius = min((borderRect.height() - borderWidth) / 2.0f, (borderRect.width() - borderWidth) / 2.0f)
 
         drawableRect.set(borderRect)
-        if (!isBorderOverlay && borderWidthPx > 0) {
-            drawableRect.inset(borderWidthPx - 1.0f, borderWidthPx - 1.0f)
+        if (!isBorderOverlay && borderWidth > 0) {
+            drawableRect.inset(borderWidth - 1.0f, borderWidth - 1.0f)
         }
-        drawableRadius = Math.min(drawableRect.height() / 2.0f, drawableRect.width() / 2.0f)
+        drawableRadius = min(drawableRect.height() / 2.0f, drawableRect.width() / 2.0f)
 
         applyColorFilter()
         updateShaderMatrix()
@@ -305,13 +299,12 @@ class CircleImageView @JvmOverloads constructor(
         return x2 + y2 <= borderRadius.toDouble().pow(2.0)
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private inner class OutlineProvider : ViewOutlineProvider() {
 
         override fun getOutline(view: View, outline: Outline) {
             val bounds = Rect()
             borderRect.roundOut(bounds)
-            outline.setRoundRect(bounds, bounds.width() / 2.0f)
+            outline.setRoundRect(bounds, bounds.width() / 2f)
         }
     }
 }
