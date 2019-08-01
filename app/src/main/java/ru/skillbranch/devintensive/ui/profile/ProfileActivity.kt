@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
+import ru.skillbranch.devintensive.ui.custom.InitialsDrawable
+import ru.skillbranch.devintensive.utils.Utils
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
@@ -65,9 +67,9 @@ class ProfileActivity : AppCompatActivity() {
             viewModel.switchTheme()
         }
 
-        et_repository.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        et_repository.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 viewModel.onRepositoryChanged(s.toString())
             }
@@ -79,6 +81,7 @@ class ProfileActivity : AppCompatActivity() {
         viewModel.getProfileData().observe(this, Observer { updateUI(it) })
         viewModel.getTheme().observe(this, Observer { updateTheme(it) })
         viewModel.getRepositoryError().observe(this, Observer { updateRepoError(it) })
+        viewModel.getInitials().observe(this, Observer { updateAvatar(it) })
     }
 
     private fun updateTheme(mode: Int) {
@@ -91,10 +94,12 @@ class ProfileActivity : AppCompatActivity() {
                 v.text = it[k].toString()
             }
         }
+        iv_avatar.initials = Utils.toInitials(profile.firstName, profile.lastName)
     }
 
     private fun updateRepoError(isError: Boolean) {
         wr_repository.error = if (isError) "Невалидный адрес репозитория" else null
+        wr_repository.isErrorEnabled = isError
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
@@ -126,6 +131,12 @@ class ProfileActivity : AppCompatActivity() {
             background.colorFilter = filter
             setImageDrawable(icon)
         }
+    }
+
+    private fun updateAvatar(initials: String) = InitialsDrawable(initials, this).let {
+        val size = 112 * resources.displayMetrics.density
+        it.setBounds(0, 0, size.toInt(), size.toInt())
+        iv_avatar.setImageDrawable(it)
     }
 
     private fun saveProfileInfo() = viewModel.saveProfileData(

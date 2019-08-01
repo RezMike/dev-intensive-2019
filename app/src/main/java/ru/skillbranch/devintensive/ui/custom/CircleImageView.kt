@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -34,6 +35,8 @@ class CircleImageView @JvmOverloads constructor(
         private const val DEFAULT_BORDER_COLOR = Color.WHITE
         private const val DEFAULT_CIRCLE_BACKGROUND_COLOR = Color.TRANSPARENT
     }
+
+    var initials: String? = null
 
     private val drawableRect = RectF()
     private val borderRect = RectF()
@@ -192,7 +195,7 @@ class CircleImageView @JvmOverloads constructor(
             if (drawable is ColorDrawable) {
                 bitmap = Bitmap.createBitmap(COLOR_DRAWABLE_DIMENSION, COLOR_DRAWABLE_DIMENSION, BITMAP_CONFIG)
             } else {
-                bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, BITMAP_CONFIG)
+                bitmap = Bitmap.createBitmap(drawable.bounds.width(), drawable.bounds.height(), BITMAP_CONFIG)
             }
 
             val canvas = Canvas(bitmap)
@@ -228,7 +231,7 @@ class CircleImageView @JvmOverloads constructor(
         bitmapPaint.isAntiAlias = true
         bitmapPaint.shader = bitmapShader
 
-        val borderWidth = borderWidthDp * context.applicationContext.resources.displayMetrics.density
+        val borderWidth = borderWidthDp * resources.displayMetrics.density
         borderPaint.style = Paint.Style.STROKE
         borderPaint.isAntiAlias = true
         borderPaint.color = borderColor
@@ -306,5 +309,46 @@ class CircleImageView @JvmOverloads constructor(
             borderRect.roundOut(bounds)
             outline.setRoundRect(bounds, bounds.width() / 2f)
         }
+    }
+}
+
+class InitialsDrawable(
+    private val initials: String,
+    private val context: Context
+) : Drawable() {
+
+    private val paint = Paint()
+
+    init {
+        val textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 48f, context.resources.displayMetrics)
+        paint.textSize = textSize
+        paint.isAntiAlias = true
+        paint.isFakeBoldText = true
+        paint.setShadowLayer(6f, 0f, 0f, Color.BLACK)
+        paint.style = Paint.Style.FILL
+        paint.textAlign = Paint.Align.CENTER
+    }
+
+    override fun draw(canvas: Canvas) {
+        paint.color = context.resources.getColor(R.color.color_accent, context.theme)
+        canvas.drawRect(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat(), paint)
+
+        paint.color = Color.WHITE
+        canvas.drawText(
+            initials, 0, initials.length, bounds.centerX().toFloat(),
+            bounds.centerY().toFloat() - paint.ascent() / 2, paint
+        )
+    }
+
+    override fun setAlpha(alpha: Int) {
+        paint.alpha = alpha
+    }
+
+    override fun getOpacity(): Int {
+        return PixelFormat.TRANSLUCENT
+    }
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {
+        paint.colorFilter = colorFilter
     }
 }
