@@ -14,7 +14,9 @@
         android:theme="@style/SplashTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <activity android:name=".ui.profile.ProfileActivity">
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
