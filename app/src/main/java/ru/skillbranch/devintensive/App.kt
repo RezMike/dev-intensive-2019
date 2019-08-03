@@ -13,7 +13,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setDefaultNightMode(PreferencesRepository.appTheme)
+        AppCompatDelegate.setDefaultNightMode(PreferencesRepository.theme)
     }
 
     companion object {

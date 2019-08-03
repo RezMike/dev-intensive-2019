@@ -23,7 +23,7 @@ object PreferencesRepository {
         PreferenceManager.getDefaultSharedPreferences(ctx)
     }
 
-    var appTheme: Int by PrefDelegate(prefs, APP_THEME, AppCompatDelegate.MODE_NIGHT_NO)
+    var theme: Int by PrefDelegate(prefs, APP_THEME, AppCompatDelegate.MODE_NIGHT_NO)
 
     var firstName: String by PrefDelegate(prefs, FIRST_NAME, "")
     var lastName: String by PrefDelegate(prefs, LAST_NAME, "")
@@ -41,6 +41,12 @@ object PreferencesRepository {
         repository = profile.repository
         rating = profile.rating
         respect = profile.respect
+    }
+
+    // for hometask 4
+    fun getAppTheme() = theme
+    fun saveAppTheme(theme: Int) {
+        this.theme = theme
     }
 }
 

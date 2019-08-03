@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.repositories.PreferencesRepository
-import ru.skillbranch.devintensive.utils.Utils
 
 class ProfileViewModel : ViewModel() {
 
@@ -21,7 +20,7 @@ class ProfileViewModel : ViewModel() {
 
     init {
         profileData.value = repository.getProfile()
-        appTheme.value = repository.appTheme
+        appTheme.value = repository.theme
         repositoryError.value = false
     }
 
@@ -41,7 +40,7 @@ class ProfileViewModel : ViewModel() {
         } else {
             appTheme.value = AppCompatDelegate.MODE_NIGHT_YES
         }
-        repository.appTheme = appTheme.value!!
+        repository.theme = appTheme.value!!
     }
 
     private fun isRepoError(repository: String): Boolean {
