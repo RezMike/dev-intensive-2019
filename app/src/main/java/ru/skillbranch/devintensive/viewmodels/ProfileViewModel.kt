@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.repositories.PreferencesRepository
+import ru.skillbranch.devintensive.utils.Utils
 
 class ProfileViewModel : ViewModel() {
 
@@ -25,7 +26,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun onRepositoryChanged(repository: String) {
-        repositoryError.value = isRepoError(repository)
+        repositoryError.value = !Utils.isRepositoryValid(repository)
     }
 
     fun saveProfileData(profile: Profile) {
@@ -42,44 +43,4 @@ class ProfileViewModel : ViewModel() {
         }
         repository.theme = appTheme.value!!
     }
-
-    private fun isRepoError(repository: String): Boolean {
-        if (repository.isEmpty()) return false
-        var repo = repository
-
-        if (repository.startsWith("https://")) {
-            repo = repo.replace("https://", "")
-        }
-        if (repository.startsWith("www.")) {
-            repo = repo.replace("www.", "")
-        }
-
-        if (!repository.startsWith("github.com/")) {
-            return true
-        }
-
-        repo = repo.replace("github.com/", "")
-
-        repoExcludeSet.forEach {
-            if (repo.startsWith(it)) return true
-        }
-
-        return Regex("^[a-z0-9]+$").matches(repo)
-    }
 }
-
-private val repoExcludeSet = setOf(
-    "enterprise",
-    "features",
-    "topics",
-    "collections",
-    "trending",
-    "events",
-    "marketplace",
-    "pricing",
-    "nonprofit",
-    "customer-stories",
-    "security",
-    "login",
-    "join"
-)
