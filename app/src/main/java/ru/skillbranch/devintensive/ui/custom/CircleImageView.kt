@@ -37,6 +37,15 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     var initials: String? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            if (value != null) {
+                setImageDrawable(InitialsDrawable(value, context))
+            } else {
+                setImageResource(R.drawable.avatar_default)
+            }
+        }
 
     private val drawableRect = RectF()
     private val borderRect = RectF()
@@ -320,6 +329,9 @@ class InitialsDrawable(
     private val paint = Paint()
 
     init {
+        val size = 112 * context.resources.displayMetrics.density
+        setBounds(0, 0, size.toInt(), size.toInt())
+
         val textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 48f, context.resources.displayMetrics)
         paint.textSize = textSize
         paint.isAntiAlias = true

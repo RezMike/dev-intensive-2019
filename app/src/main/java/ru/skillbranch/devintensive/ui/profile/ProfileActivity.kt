@@ -15,11 +15,15 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
-import ru.skillbranch.devintensive.ui.custom.InitialsDrawable
-import ru.skillbranch.devintensive.utils.Utils
+import ru.skillbranch.devintensive.models.initials
+import ru.skillbranch.devintensive.models.toMap
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
+
+    companion object {
+        private const val IS_EDIT_MODE = "IS_EDIT_MODE"
+    }
 
     private var isEditMode = false
 
@@ -74,6 +78,8 @@ class ProfileActivity : AppCompatActivity() {
                 viewModel.onRepositoryChanged(s.toString())
             }
         })
+
+        iv_avatar.initials = null
     }
 
     private fun initViewModel() {
@@ -81,7 +87,6 @@ class ProfileActivity : AppCompatActivity() {
         viewModel.getProfileData().observe(this, Observer { updateUI(it) })
         viewModel.getTheme().observe(this, Observer { updateTheme(it) })
         viewModel.getRepositoryError().observe(this, Observer { updateRepoError(it) })
-        viewModel.getInitials().observe(this, Observer { updateAvatar(it) })
     }
 
     private fun updateTheme(mode: Int) {
@@ -94,7 +99,7 @@ class ProfileActivity : AppCompatActivity() {
                 v.text = it[k].toString()
             }
         }
-        iv_avatar.initials = Utils.toInitials(profile.firstName, profile.lastName)
+        iv_avatar.initials = profile.initials
     }
 
     private fun updateRepoError(isError: Boolean) {
@@ -133,12 +138,6 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateAvatar(initials: String) = InitialsDrawable(initials, this).let {
-        val size = 112 * resources.displayMetrics.density
-        it.setBounds(0, 0, size.toInt(), size.toInt())
-        iv_avatar.setImageDrawable(it)
-    }
-
     private fun saveProfileInfo() = viewModel.saveProfileData(
         Profile(
             firstName = et_first_name.text.toString(),
@@ -147,8 +146,4 @@ class ProfileActivity : AppCompatActivity() {
             repository = et_repository.text.toString()
         )
     )
-
-    companion object {
-        const val IS_EDIT_MODE = "IS_EDIT_MODE"
-    }
 }
