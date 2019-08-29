@@ -3,8 +3,9 @@ package ru.skillbranch.devintensive.models.data
 import androidx.annotation.VisibleForTesting
 import ru.skillbranch.devintensive.extensions.shortFormat
 import ru.skillbranch.devintensive.models.BaseMessage
+import ru.skillbranch.devintensive.models.ImageMessage
+import ru.skillbranch.devintensive.models.TextMessage
 import ru.skillbranch.devintensive.utils.Utils
-import java.util.*
 
 data class Chat(
     val id: String,
@@ -44,22 +45,17 @@ data class Chat(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun unreadableMessageCount(): Int {
-        return 0
-        // TODO
-    }
+    fun unreadableMessageCount() = messages.count { !it.isReaded }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun lastMessageDate(): Date? {
-        return Date()
-        // TODO
-    }
+    fun lastMessageDate() = messages.lastOrNull()?.date
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    fun lastMessageShort(): Pair<String, String?> = "Сообщений еще нет" to "@John_Doe"
-    /*when (val lastMessage = messages.lastOrNull()) {
-        else -> TODO()
-    }*/
+    fun lastMessageShort(): Pair<String, String?> = when (val message = messages.lastOrNull()) {
+        is TextMessage -> message.text to message.from.firstName
+        is ImageMessage -> "${message.from.firstName} - отправил фото" to message.from.firstName
+        else -> "" to null
+    }
 }
 
 enum class ChatType {
