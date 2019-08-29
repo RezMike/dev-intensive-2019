@@ -1,4 +1,4 @@
-package ru.skillbranch.devintensive.models
+package ru.skillbranch.devintensive.models.data
 
 import ru.skillbranch.devintensive.utils.Utils
 import java.util.*
@@ -14,20 +14,10 @@ data class User(
     val isOnline: Boolean = false
 ) {
 
-    constructor(id: String, firstName: String?, lastName: String?) : this(id, firstName, lastName, null)
+    constructor(id: String, firstName: String?, lastName: String?)
+            : this(id, firstName, lastName, null)
 
     constructor(id: String) : this(id, "John", "Doe")
-
-    init {
-        println(
-            "It's Alive!!!\n${
-            if (lastName === "Doe")
-                "His name is $firstName $lastName"
-            else
-                "And his name is $firstName $lastName!!!"
-            }\n"
-        )
-    }
 
     companion object Factory {
 
@@ -38,7 +28,11 @@ data class User(
 
             val (firstName, lastName) = Utils.parseFullName(fullName)
 
-            return User("$lastId", firstName, lastName)
+            return User(
+                "$lastId",
+                firstName,
+                lastName
+            )
         }
     }
 

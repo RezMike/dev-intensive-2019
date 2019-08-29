@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_size"
+    android:padding="@dimen/spacing_normal_16">
+
+    <ru.skillbranch.devintensive.ui.custom.AvatarImageView
+        android:id="@+id/iv_avatar_group"
+        android:layout_width="@dimen/avatar_item_size"
+        android:layout_height="@dimen/avatar_item_size"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="@dimen/spacing_normal_16"
+        app:aiv_borderWidth="0dp"
+        app:aiv_initialsSize="20sp"
+        tools:background="@color/color_accent"/>
+
+    <View
+        android:id="@+id/sv_indicator"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/tv_title_group"
+        android:background="@drawable/bg_indicator"/>
+
+    <TextView
+        android:id="@+id/tv_title_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/spacing_normal_16"
+        android:layout_toLeftOf="@id/tv_date_group"
+        android:layout_toRightOf="@id/iv_avatar_group"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:textColor="@color/color_primary"
+        android:textSize="14sp"
+        tools:text="chat title"/>
+
+    <TextView
+        android:id="@+id/tv_message_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title_group"
+        android:layout_marginRight="@dimen/spacing_tiny_4"
+        android:layout_toRightOf="@id/iv_avatar_group"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_primary"
+        android:textSize="14sp"
+        tools:text="John_Doe"/>
+
+    <TextView
+        android:id="@+id/tv_message_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title_group"
+        android:layout_marginRight="@dimen/spacing_normal_16"
+        android:layout_toLeftOf="@id/tv_counter_group"
+        android:layout_toRightOf="@id/tv_message_author"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_gray_dark"
+        android:textSize="14sp"
+        tools:text="Когда я проходил интенсив, я мало спал"/>
+
+    <TextView
+        android:id="@+id/tv_date_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:textSize="10sp"
+        tools:text="18:00"/>
+
+    <TextView
+        android:id="@+id/tv_counter_group"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/counter_size"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_counter"
+        android:gravity="center"
+        android:minWidth="@dimen/counter_size"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textColor="@color/color_white"
+        android:textSize="10sp"
+        tools:text="11"/>
+
+</RelativeLayout>

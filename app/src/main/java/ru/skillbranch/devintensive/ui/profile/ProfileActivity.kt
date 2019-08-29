@@ -128,7 +128,7 @@ class ProfileActivity : AppCompatActivity() {
             }
 
             val icon = if (isEdit) {
-                resources.getDrawable(R.drawable.ic_save_black_24dp, theme)
+                resources.getDrawable(R.drawable.ic_save_white_24dp, theme)
             } else {
                 resources.getDrawable(R.drawable.ic_edit_day_night, theme)
             }

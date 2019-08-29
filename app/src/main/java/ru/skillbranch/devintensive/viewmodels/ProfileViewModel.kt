@@ -2,8 +2,8 @@ package ru.skillbranch.devintensive.viewmodels
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ru.skillbranch.devintensive.extensions.mutableLiveData
 import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.repositories.PreferencesRepository
 import ru.skillbranch.devintensive.utils.Utils
@@ -11,19 +11,13 @@ import ru.skillbranch.devintensive.utils.Utils
 class ProfileViewModel : ViewModel() {
 
     private val repository = PreferencesRepository
-    private val profileData = MutableLiveData<Profile>()
-    private val appTheme = MutableLiveData<Int>()
-    private val repositoryError = MutableLiveData<Boolean>()
+    private val profileData = mutableLiveData(repository.getProfile())
+    private val appTheme = mutableLiveData(repository.theme)
+    private val repositoryError = mutableLiveData(false)
 
     fun getProfileData(): LiveData<Profile> = profileData
     fun getTheme(): LiveData<Int> = appTheme
     fun getRepositoryError(): LiveData<Boolean> = repositoryError
-
-    init {
-        profileData.value = repository.getProfile()
-        appTheme.value = repository.theme
-        repositoryError.value = false
-    }
 
     fun onRepositoryChanged(repository: String) {
         repositoryError.value = !Utils.isRepositoryValid(repository)

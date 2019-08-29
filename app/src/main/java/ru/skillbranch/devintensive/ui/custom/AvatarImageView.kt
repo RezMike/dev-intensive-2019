@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -21,7 +20,7 @@ import ru.skillbranch.devintensive.R
 import kotlin.math.min
 import kotlin.math.pow
 
-class CircleImageView @JvmOverloads constructor(
+class AvatarImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,
     defStyle: Int = 0
@@ -39,12 +38,12 @@ class CircleImageView @JvmOverloads constructor(
     var initials: String? = null
         set(value) {
             if (field == value) return
-            field = value
             if (value != null) {
-                setImageDrawable(InitialsDrawable(value, context))
+                setImageDrawable(InitialsDrawable(value, initialsSize, layoutParams.width, context))
             } else {
                 setImageResource(R.drawable.avatar_default)
             }
+            field = value
         }
 
     private val drawableRect = RectF()
@@ -55,6 +54,7 @@ class CircleImageView @JvmOverloads constructor(
     private val borderPaint = Paint()
     private val circleBackgroundPaint = Paint()
 
+    private val initialsSize: Int
     private var borderColor = DEFAULT_BORDER_COLOR
     private var borderWidthDp = DEFAULT_BORDER_WIDTH
     private val circleBackgroundColor = DEFAULT_CIRCLE_BACKGROUND_COLOR
@@ -72,7 +72,6 @@ class CircleImageView @JvmOverloads constructor(
     private var isReady: Boolean = false
     private var isSetupPending: Boolean = false
     private var isBorderOverlay = false
-    private val isDisableCircularTransformation: Boolean = false
 
     fun getBorderColor() = borderColor
 
@@ -103,12 +102,18 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     init {
-        val a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0)
+        val a = context.obtainStyledAttributes(attrs, R.styleable.AvatarImageView, defStyle, 0)
 
-        borderWidthDp = a.getDimensionPixelSize(R.styleable.CircleImageView_cv_borderWidth, DEFAULT_BORDER_WIDTH)
-        borderColor = a.getColor(R.styleable.CircleImageView_cv_borderColor, DEFAULT_BORDER_COLOR)
+        val borderWidth = a.getDimensionPixelSize(
+            R.styleable.AvatarImageView_aiv_borderWidth,
+            DEFAULT_BORDER_WIDTH
+        )
+        borderWidthDp = (borderWidth * resources.displayMetrics.density).toInt()
+        borderColor = a.getColor(R.styleable.AvatarImageView_aiv_borderColor, DEFAULT_BORDER_COLOR)
+        initialsSize = a.getDimensionPixelSize(R.styleable.AvatarImageView_aiv_initialsSize, 20)
 
         a.recycle()
+        initials = null
 
         super.setScaleType(SCALE_TYPE)
         isReady = true
@@ -138,7 +143,12 @@ class CircleImageView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         if (bitmap == null) return
 
-        canvas.drawCircle(drawableRect.centerX(), drawableRect.centerY(), drawableRadius, bitmapPaint)
+        canvas.drawCircle(
+            drawableRect.centerX(),
+            drawableRect.centerY(),
+            drawableRadius,
+            bitmapPaint
+        )
         if (borderWidthDp > 0) {
             canvas.drawCircle(borderRect.centerX(), borderRect.centerY(), borderRadius, borderPaint)
         }
@@ -202,9 +212,17 @@ class CircleImageView @JvmOverloads constructor(
             val bitmap: Bitmap
 
             if (drawable is ColorDrawable) {
-                bitmap = Bitmap.createBitmap(COLOR_DRAWABLE_DIMENSION, COLOR_DRAWABLE_DIMENSION, BITMAP_CONFIG)
+                bitmap = Bitmap.createBitmap(
+                    COLOR_DRAWABLE_DIMENSION,
+                    COLOR_DRAWABLE_DIMENSION,
+                    BITMAP_CONFIG
+                )
             } else {
-                bitmap = Bitmap.createBitmap(drawable.bounds.width(), drawable.bounds.height(), BITMAP_CONFIG)
+                bitmap = Bitmap.createBitmap(
+                    drawable.bounds.width(),
+                    drawable.bounds.height(),
+                    BITMAP_CONFIG
+                )
             }
 
             val canvas = Canvas(bitmap)
@@ -254,7 +272,10 @@ class CircleImageView @JvmOverloads constructor(
         bitmapWidth = bitmap!!.width
 
         borderRect.set(calculateBounds())
-        borderRadius = min((borderRect.height() - borderWidth) / 2.0f, (borderRect.width() - borderWidth) / 2.0f)
+        borderRadius = min(
+            (borderRect.height() - borderWidth) / 2.0f,
+            (borderRect.width() - borderWidth) / 2.0f
+        )
 
         drawableRect.set(borderRect)
         if (!isBorderOverlay && borderWidth > 0) {
@@ -295,7 +316,10 @@ class CircleImageView @JvmOverloads constructor(
         }
 
         shaderMatrix.setScale(scale, scale)
-        shaderMatrix.postTranslate((dx + 0.5f).toInt() + drawableRect.left, (dy + 0.5f).toInt() + drawableRect.top)
+        shaderMatrix.postTranslate(
+            (dx + 0.5f).toInt() + drawableRect.left,
+            (dy + 0.5f).toInt() + drawableRect.top
+        )
 
         bitmapShader!!.setLocalMatrix(shaderMatrix)
     }
@@ -318,49 +342,5 @@ class CircleImageView @JvmOverloads constructor(
             borderRect.roundOut(bounds)
             outline.setRoundRect(bounds, bounds.width() / 2f)
         }
-    }
-}
-
-class InitialsDrawable(
-    private val initials: String,
-    private val context: Context
-) : Drawable() {
-
-    private val paint = Paint()
-
-    init {
-        val size = 112 * context.resources.displayMetrics.density
-        setBounds(0, 0, size.toInt(), size.toInt())
-
-        val textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 48f, context.resources.displayMetrics)
-        paint.textSize = textSize
-        paint.isAntiAlias = true
-        paint.isFakeBoldText = true
-        paint.setShadowLayer(6f, 0f, 0f, Color.BLACK)
-        paint.style = Paint.Style.FILL
-        paint.textAlign = Paint.Align.CENTER
-    }
-
-    override fun draw(canvas: Canvas) {
-        paint.color = context.resources.getColor(R.color.color_accent, context.theme)
-        canvas.drawRect(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat(), paint)
-
-        paint.color = Color.WHITE
-        canvas.drawText(
-            initials, 0, initials.length, bounds.centerX().toFloat(),
-            bounds.centerY().toFloat() - paint.ascent() / 2, paint
-        )
-    }
-
-    override fun setAlpha(alpha: Int) {
-        paint.alpha = alpha
-    }
-
-    override fun getOpacity(): Int {
-        return PixelFormat.TRANSLUCENT
-    }
-
-    override fun setColorFilter(colorFilter: ColorFilter?) {
-        paint.colorFilter = colorFilter
     }
 }
