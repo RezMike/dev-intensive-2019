@@ -7,7 +7,7 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 enum class TimeUnits(val size: Long) {
-    SECOND(1000L),
+    SECOND(1000L + 200L),
     MINUTE(60 * SECOND.size),
     HOUR(60 * MINUTE.size),
     DAY(24 * HOUR.size);
@@ -32,7 +32,7 @@ val Long.asMin get() = this.absoluteValue / MINUTE.size
 val Long.asHour get() = this.absoluteValue / HOUR.size
 val Long.asDay get() = this.absoluteValue / DAY.size
 
-fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
+fun Date.format(pattern: String = "HH:mm:ss dd.MM"): String {
     val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
     return dateFormat.format(this)
 }
